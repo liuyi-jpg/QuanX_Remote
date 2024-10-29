@@ -1,12 +1,18 @@
-// 创建脚本处理请求头
 const $ = new Env('UDT Auth 提取');
 
 !(async () => {
     try {
-        
+        // 环境检查
+        if (!$request) {
+            $.msg('UDT Auth 提取失败', '', '请在 HTTP 请求脚本中运行');
+            $.done();
+            return;
+        }
 
-        // 获取请求头中的 udtauth12
-        const udtauth = $request.headers['udtauth12'];
+        // 获取请求头中的 udtauth12，兼容大小写
+        const udtauth = $request.headers['udtauth12'] || 
+                       $request.headers.udtauth12 || 
+                       $request.headers['UDTAUTH12'];
         
         if (udtauth) {
             // 对 URL 编码的值进行解码
@@ -18,34 +24,55 @@ const $ = new Env('UDT Auth 提取');
             // 输出日志
             $.log(`✅ 成功提取 udtauth12: ${decodedAuth}`);
         } else {
-            
+            $.msg('UDT Auth 提取失败', '', '未找到 udtauth12 请求头');
             $.log('❌ 未找到 udtauth12 请求头');
         }
     } catch (e) {
-        
+        $.msg('UDT Auth 提取失败', '', e.message);
         $.log(`❌ 错误: ${e.message}`);
     }
 })()
-.catch((e) => $.log(`❌ 错误: ${e.message}`))
+.catch((e) => {
+    $.msg('UDT Auth 提取失败', '', e.message);
+    $.log(`❌ 错误: ${e.message}`);
+})
 .finally(() => $.done());
 
-// Env 类
+// Env 类完整实现
 function Env(t) {
     return new class {
         constructor(t) {
             this.name = t;
+            this.isNode = typeof module !== 'undefined';
+            this.isQuanX = typeof $notify !== 'undefined';
+            this.isSurge = typeof $notification !== 'undefined';
+            this.request = $request || {};
         }
         
         log(...t) {
-            console.log(t.join("\n"));
+            if(this.isNode) {
+                console.log(t.join("\n"));
+            } else {
+                console.log(`[${this.name}] ${t.join("\n")}`);
+            }
         }
         
         msg(title, subt = '', desc = '', opts = {}) {
-            $notify(title, subt, desc, opts);
+            if(this.isQuanX) {
+                $notify(title, subt, desc, opts);
+            } else if(this.isSurge) {
+                $notification.post(title, subt, desc, opts);
+            } else {
+                console.log(`${title}\n${subt}\n${desc}`);
+            }
         }
         
-        done() {
-            $done({});
+        done(val = {}) {
+            if(this.isQuanX || this.isSurge) {
+                $done(val);
+            } else {
+                return val;
+            }
         }
     }(t);
 }
