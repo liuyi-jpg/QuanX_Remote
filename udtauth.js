@@ -24,11 +24,11 @@ const $ = new Env('UDT Auth 提取');
             // 输出日志
             $.log(`✅ 成功提取 udtauth12: ${decodedAuth}`);
         } else {
-            $.msg('UDT Auth 提取失败', '', '未找到 udtauth12 请求头');
+            
             $.log('❌ 未找到 udtauth12 请求头');
         }
     } catch (e) {
-        $.msg('UDT Auth 提取失败', '', e.message);
+        
         $.log(`❌ 错误: ${e.message}`);
     }
 })()
