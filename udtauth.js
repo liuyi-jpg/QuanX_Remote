@@ -15,14 +15,14 @@ const $ = new Env('UDT Auth 提取');
                        $request.headers['UDTAUTH12'];
         
         if (udtauth) {
-            // 对 URL 编码的值进行解码
-            const decodedAuth = decodeURIComponent(udtauth);
+            // 去除前后空格
+            const trimmedAuth = udtauth.trim();
             
             // 发送通知
-            $.msg('UDT Auth 提取成功', '', `${decodedAuth}`);
+            $.msg('UDT Auth 提取成功', '', `${trimmedAuth}`);
             
             // 输出日志
-            $.log(`✅ 成功提取 udtauth12: ${decodedAuth}`);
+            $.log(`✅ 成功提取 udtauth12: ${trimmedAuth}`);
         } else {
             
             $.log('❌ 未找到 udtauth12 请求头');
