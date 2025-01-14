@@ -10,9 +10,9 @@ const $ = new Env('UDT Auth 提取');
         }
 
         // 获取请求头中的 udtauth12，兼容大小写
-        const udtauth = $request.headers['udtauth12'] || 
-                       $request.headers.udtauth12 || 
-                       $request.headers['UDTAUTH12'];
+        const udtauth = $request.headers['udtauth14'] || 
+                       $request.headers.udtauth14 || 
+                       $request.headers['UDTAUTH14'];
         
         if (udtauth) {
             // 去除前后空格
@@ -22,10 +22,10 @@ const $ = new Env('UDT Auth 提取');
             $.msg('UDT Auth 提取成功', '', `${trimmedAuth}`);
             
             // 输出日志
-            $.log(`✅ 成功提取 udtauth12: ${trimmedAuth}`);
+            $.log(`✅ 成功提取 udtauth14: ${trimmedAuth}`);
         } else {
             
-            $.log('❌ 未找到 udtauth12 请求头');
+            $.log('❌ 未找到 udtauth14 请求头');
         }
     } catch (e) {
         
